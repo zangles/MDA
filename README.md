@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="logo.png" alt="Model Domain Architecture Logo" width="280">
+</p>
+
 # Model Domain Architecture (MDA)
 
 La **Model Domain Architecture (MDA)** es un enfoque arquitectónico pragmático, inspirado en principios de Domain-Driven Design (DDD) y Arquitectura Limpia, pero adaptado específicamente a proyectos Laravel donde la separación natural se da por **modelos** más que por dominios conceptuales complejos.
@@ -279,4 +283,4 @@ Es una arquitectura práctica, realista y altamente usable en equipos que trabaj
 
 ---
 
-¿Deseas agregar ejemplos de código detallados para uno de los modelos (por ejemplo `Credito`)?
+
