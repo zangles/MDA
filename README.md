@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png" alt="Model Domain Architecture Logo" width="280">
+  <img src="logo.png" alt="Model Domain Architecture Logo" width="480">
 </p>
 
 # Model Domain Architecture (MDA)
