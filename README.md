@@ -76,6 +76,9 @@ app/
     gestion/
       Acuerdo.php
 ```
+> Nota:
+> Models se agrupan por base de datos cuando la aplicación utiliza múltiples conexiones.
+> Esta es una excepción válida porque responde a necesidades de infraestructura, no de dominio.
 
 ---
 
@@ -128,8 +131,8 @@ Consultas SQL/Eloquent complejas:
 Se agrupan por **carpetas de modelo**, por ejemplo:
 
 ```
-Queries/Credito/GetCreditosParaRefinanciacion.php
-Queries/Credito/GetCreditosVencidos.php
+Queries/Credito/CreditoQueries.php
+Queries/Item/ItemQueries.php
 ```
 
 Los queries están aislados porque **es normal** que crezcan mucho.
@@ -143,9 +146,12 @@ Clases enfocadas en **persistencia básica**:
 * `create()`
 * `update()`
 * `delete()`
-* `save()`
 
 Evitan la sobrecarga de tener 50 métodos especializados dentro del repositorio.
+
+Las consultas complejas NO se mezclan aquí; van en Queries.
+
+Las búsquedas simples NO se mezclan aquí; van en Finders.
 
 ---
 
