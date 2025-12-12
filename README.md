@@ -1,4 +1,16 @@
 <p align="center">
+  <a href="README.md">
+    <img src="https://raw.githubusercontent.com/hjnilsson/country-flags/master/png100px/es.png" 
+         alt="Español" width="40" />
+  </a>
+  &nbsp;&nbsp;&nbsp;
+  <a href="README.en.md">
+    <img src="https://raw.githubusercontent.com/hjnilsson/country-flags/master/png100px/us.png" 
+         alt="English" width="40" />
+  </a>
+</p>
+
+<p align="center">
   <img src="logo.png" alt="Model Domain Architecture Logo" width="1360">
 </p>
 
