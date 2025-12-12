@@ -159,9 +159,9 @@ Las búsquedas simples NO se mezclan aquí; van en Finders.
 
 Comportamientos modificadores del dominio:
 
-* actualizar un crédito
+* actualizar una orden
 * recalcular montos
-* cerrar un acuerdo
+* crear un cliente
 
 Las Actions **usan repositorios** y nunca queries.
 
@@ -302,7 +302,7 @@ Si algún día aparece un dominio grande (por ejemplo, "Finanzas"), puede agrupa
 
 # 6. Ejemplo resumido de flujo
 
-Controller de crédito:
+Controller de Ordenes:
 
 ```
 $order = $orderService->findById($id);
