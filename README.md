@@ -193,6 +193,76 @@ Aunque algunas veces la interfaz puede omitirse en proyectos simples, en MDA es 
 
 ---
 
+## 3.8 Servicios Compuestos
+
+Además de los servicios que están directamente asociados a un modelo específico, en MDA también se contemplan los **Servicios Compuestos**.
+
+Un Servicio Compuesto corresponde a un caso de uso del sistema que:
+
+- **no representa un único modelo**, sino que combina operaciones sobre múltiples modelos,
+- **agrega lógica de negocio transversal**,
+- y **orquesta llamadas a varios servicios/consultas/repositorios asociados**.
+
+Ejemplos típicos de Servicios Compuestos pueden ser:
+
+- Imputación de pagos (usa CreditoService, ItemService, etc.)
+- Liquidaciones que combinan múltiples entidades
+- Reportes o sincronizaciones complejas del ecosistema
+
+### 📌 ¿Dónde se ubican?
+
+A diferencia de los modelos (como `Credito`, `Cliente`, etc.), los Servicios Compuestos no tienen un **modelo físico asociado**.  
+Sin embargo, para mantener la consistencia de **Model Domain Architecture**, estos servicios:
+
+- se colocan en la carpeta `app/Services/` junto a los demás módulos
+- pueden tener su propio conjunto de DTOs, Actions y Queries
+  dentro de las carpetas generales correspondientes, agrupados por el nombre del caso de uso
+
+Por ejemplo:
+
+```
+app/
+├── Services/
+│ ├── Credito/
+│ ├── Cliente/
+│ └── Imputacion/ ← Servicio Compuesto
+│ └── ImputacionService.php
+├── DTO/
+│ ├── Credito/
+│ ├── Cliente/
+│ └── Imputacion/ ← DTO específico
+│ └── ImputacionDTO.php
+├── Actions/
+│ ├── Credito/
+│ ├── Cliente/
+│ └── Imputacion/ ← Acciones
+│ ├── EjecutarImputacion.php
+│ └── ValidarImputacion.php
+└── Queries/
+├── Credito/
+├── Cliente/
+└── Imputacion/ ← Consultas propias
+└── GetImputacionesPendientes.php
+```
+
+### 🧾 ¿Por qué es consistente con MDA?
+
+Aunque un Servicio Compuesto no tiene un modelo Eloquent asociado, sigue:
+
+- la **misma lógica estructural** que los módulos por modelo,
+- la organización por **tipo de responsabilidad** (DTOs, Actions, Queries, Services),
+- y respeta que cada pieza forme parte de un **área funcional cohesionada** del negocio.
+
+Los Servicios Compuestos son conceptualmente similares a lo que en otras arquitecturas se conoce como:
+
+- Domain Services  
+- Application Services (en Clean Architecture)  
+- Casos de uso transversales que requieren coordinación de varios modelos.
+
+Integrar este tipo de servicios de forma explícita en MDA permite mantener la estructura **uniforme, predecible y escalable** sin forzar que todo dependa de un único modelo.
+
+---
+
 # 4. Relación entre componentes
 
 ```
