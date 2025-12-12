@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img src="logo.png" alt="Model Domain Architecture Logo" width="1360">
+  <img src="logo.jpg" alt="Model Domain Architecture Logo" width="1024">
 </p>
 
 > **Nota importante**
