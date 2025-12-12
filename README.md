@@ -143,7 +143,38 @@ OrderFinder.php
 UserFinder.php
 ```
 
-Esto evita crear docenas de pequeñas clases innecesarias.
+🔀 Variaciones posibles en la organización de Finders
+
+MDA propone, por defecto, agrupar todos los métodos de lectura simples de un modelo en un único archivo, por ejemplo:
+
+* UserFinder.php
+* OrderFinder.php
+
+Esto mantiene el árbol de directorios liviano y evita crear decenas de clases pequeñas.
+
+Sin embargo, esta no es la única forma válida de organizar los Finders.
+Si tu equipo prefiere una estructura más granular —por ejemplo, una clase Finder por consulta:
+
+```
+FindUserById.php
+FindUsersByRole.php
+FindOrdersByCustomer.php
+```
+
+También es totalmente compatible con MDA.
+
+La idea central es que:
+
+Las consultas simples estén separadas del servicio y la lógica de negocio.
+
+La organización interna sea coherente para tu proyecto.
+
+El equipo pueda modificar o escalar la estructura sin fricción.
+
+En otras palabras:
+
+>MDA define dónde viven las cosas, pero no cómo deben verse exactamente.
+>Cada proyecto puede ajustar el nivel de granularidad que prefiera.
 
 ---
 
