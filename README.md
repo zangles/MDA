@@ -238,11 +238,10 @@ app/
 │ └── Imputacion/ ← Acciones
 │ ├── EjecutarImputacion.php
 │ └── ValidarImputacion.php
-└── Queries/
-├── Credito/
-├── Cliente/
-└── Imputacion/ ← Consultas propias
-└── GetImputacionesPendientes.php
+├── Queries/
+│ ├── Credito/
+│ ├── Cliente/
+│ └── Imputacion/ ← Consultas propias
 ```
 
 ### 🧾 ¿Por qué es consistente con MDA?
