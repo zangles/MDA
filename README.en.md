@@ -4,6 +4,10 @@
   <a href="README.en.md"><img src="https://img.shields.io/badge/English-🇺🇸-blue?style=for-the-badge" alt="English" /></a>
 </p>
 
+<p align="center">
+  <img src="logo.png" alt="Model Domain Architecture Logo" width="1360">
+</p>
+
 ## Model Domain Architecture (MDA)
 
 The **Model Domain Architecture (MDA)** is a pragmatic architectural approach, inspired by Domain-Driven Design (DDD) and Clean Architecture principles, but specifically adapted to Laravel projects where the natural separation occurs by **models** rather than by complex conceptual domains.
@@ -375,3 +379,4 @@ The **Model Domain Architecture (MDA)** offers a perfect balance between organiz
 
 
 It is a practical, realistic, and highly usable architecture for teams working with Laravel, especially with multiple databases and domains that do not fit perfectly into traditional DDD.
+
