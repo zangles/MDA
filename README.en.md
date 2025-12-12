@@ -8,17 +8,22 @@
   <img src="logo.png" alt="Model Domain Architecture Logo" width="1360">
 </p>
 
+> **Important note**
+>
+> Model Domain Architecture (MDA) is a **pragmatic and flexible architectural approach**, inspired by principles from Domain-Driven Design and Clean Architecture, but **adapted to real-world Laravel projects**.
+>
+> Its goal is to serve as a **clear and practical starting point**, not as a rigid or exhaustive framework like DDD, Hexagonal, or Clean Architecture.  
+> MDA defines a recommended organization of layers and responsibilities, **but it does not technically prevent direct access to internal components** (Finder, Query, Action, etc.).
+>
+> The recommended path is to always go through Services, and only in specific cases use direct access, with judgment and responsibility. This foundation can be expanded or adjusted according to the project’s needs.
+
+
 ## Model Domain Architecture (MDA)
 
 The **Model Domain Architecture (MDA)** is a pragmatic architectural approach, inspired by Domain-Driven Design (DDD) and Clean Architecture principles, but specifically adapted to Laravel projects where the natural separation occurs by **models** rather than by complex conceptual domains.
 
 MDA organizes the project around the system's *core models* (for example: `User`, `Order`, `Product`, etc.), maintaining a clear, scalable, and easy-to-navigate structure even in applications with multiple databases.
 
-> ⚠️ Important Note
-
-> MDA proposes an organized way to structure code, but does not impose rigid technical restrictions.
-> It defines recommended paths, not absolute rules.
-> Developer discretion remains a central part of the design.
 ---
 
 ## 🎯 Goal
@@ -29,23 +34,6 @@ To provide an architecture that is:
 * **Organized by model**: each model has its own mini-module with all its behaviors.
 * **Predictable**: any developer knows exactly where to look for logic related to a model.
 * **Practical**: avoids the unnecessary over-engineering that sometimes arises with full DDD.
-
-> **Important Note**
->
-> Model Domain Architecture (MDA) is not intended to be a formal architecture or a rigid framework like Domain-Driven Design, Hexagonal, or Clean Architecture.
->
-> Its goal is to be **a clear, simple, and practical starting point** for organizing Laravel projects, without imposing a heavy structure.
->
-> MDA is a **flexible base**, not a strict rule: every team can expand it, modify it, or combine it with other ideas according to their needs.
->
-> For example, MDA currently does not include:
->
-> * **Formal Domain Events**, where entities emit internal domain events (e.g., `Order::created()` → fires `OrderPlacedEvent` before persistence). You could add this by creating a `Domain/Events` folder and a mechanism to dispatch them, if your project requires it.
-> * **Value Objects** to represent immutable concepts (like Money, Email, PhoneNumber). Today MDA uses simple DTOs, but you can extend it if the logic justifies it.
-> * **Aggregates and aggregate roots**, useful for stricter domains or those rich in invariants.
-> * **Infrastructure/Domain separation** as in hexagonal architectures.
->
-> None of these things contradict MDA: they are simply **not included by default** to keep the architecture simple. If your project requires more formality or robustness, you can add these layers without breaking the general approach.
 
 ---
 
