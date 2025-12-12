@@ -535,7 +535,7 @@ Si en algún punto necesitás más, probablemente:
 
 ---
 
-# 8. Conclusión
+# 9. Conclusión
 
 La **Model Domain Architecture (MDA)** ofrece un balance perfecto entre organización, escalabilidad y simplicidad. Su premisa fundamental es que los modelos son el eje central del diseño, y todo lo relacionado a un modelo vive junto a él.
 
