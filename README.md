@@ -6,7 +6,7 @@
 
 La **Model Domain Architecture (MDA)** es un enfoque arquitectónico pragmático, inspirado en principios de Domain-Driven Design (DDD) y Arquitectura Limpia, pero adaptado específicamente a proyectos Laravel donde la separación natural se da por **modelos** más que por dominios conceptuales complejos.
 
-MDA organiza el proyecto alrededor de los *modelos centrales* del sistema (por ejemplo: `Credito`, `Cliente`, `CreditoDetalle`, `Item`, `Acuerdo`, etc.), manteniendo una estructura clara, escalable y fácil de navegar incluso en aplicaciones con múltiples bases de datos.
+MDA organiza el proyecto alrededor de los *modelos centrales* del sistema (por ejemplo: `User`, `Order`, `Product`, etc.), manteniendo una estructura clara, escalable y fácil de navegar incluso en aplicaciones con múltiples bases de datos.
 
 ---
 
@@ -43,38 +43,38 @@ Esto crea pequeñas islas de responsabilidad clara.
 ```
 app/
   Actions/
-    Credito/
-    Cliente/
-    CreditoDetalle/
+    Order/
+    User/
+    Product/
   DTO/
-    Credito/
-    Cliente/
-    CreditoDetalle/
+    Order/
+    User/
+    Product/
   Finders/
-    CreditoFinder.php
-    ClienteFinder.php
-    CreditoDetalleFinder.php
+    OrderFinder.php
+    UserFinder.php
+    ProductFinder.php
   Queries/
-    Credito/
-    Cliente/
-    CreditoDetalle/
+    Order/
+    User/
+    Product/
   Repositories/
-    CreditoRepository.php
-    ClienteRepository.php
-    CreditoDetalleRepository.php
+    OrderRepository.php
+    UserRepository.php
+    ProductRepository.php
   Services/
     Interfaces/
-      CreditoServiceInterface.php
-      ClienteServiceInterface.php
-    CreditoService.php
-    ClienteService.php
+      OrderServiceInterface.php
+      ClientServiceInterface.php
+    OrderService.php
+    ClientService.php
   Models/
-    maestro/
-      Credito.php
-      Cliente.php
-      CreditoDetalle.php
-    gestion/
-      Acuerdo.php
+    main/
+      Order.php
+      User.php
+      Product.php
+    Logistic/
+      Delivery.php
 ```
 > Nota:
 > Models se agrupan por base de datos cuando la aplicación utiliza múltiples conexiones.
@@ -102,16 +102,16 @@ Ventajas:
 Clases con métodos de lecturas simples:
 
 * `findById($id)`
-* `findByCliente($clienteId)`
-* `findByCredito($creditoId)`
+* `findByUserId($userId)`
+* `findByOrderId($orderId)`
 
 Todas las búsquedas simples que no requieren joins elaborados o lógica compleja.
 
 Se agrupan **por modelo**, en un único archivo por modelo:
 
 ```
-CreditoFinder.php
-ClienteFinder.php
+OrderFinder.php
+UserFinder.php
 ```
 
 Esto evita crear docenas de pequeñas clases innecesarias.
@@ -131,8 +131,8 @@ Consultas SQL/Eloquent complejas:
 Se agrupan por **carpetas de modelo**, por ejemplo:
 
 ```
-Queries/Credito/CreditoQueries.php
-Queries/Item/ItemQueries.php
+Queries/Order/OrderQueries.php
+Queries/User/UserQueries.php
 ```
 
 Los queries están aislados porque **es normal** que crezcan mucho.
@@ -205,13 +205,13 @@ Un Servicio Compuesto corresponde a un caso de uso del sistema que:
 
 Ejemplos típicos de Servicios Compuestos pueden ser:
 
-- Imputación de pagos (usa CreditoService, ItemService, etc.)
+- NotificacionesService (usa UserService, PaymentService, etc.)
 - Liquidaciones que combinan múltiples entidades
 - Reportes o sincronizaciones complejas del ecosistema
 
 ### 📌 ¿Dónde se ubican?
 
-A diferencia de los modelos (como `Credito`, `Cliente`, etc.), los Servicios Compuestos no tienen un **modelo físico asociado**.  
+A diferencia de los modelos (como `Order`, `User`, etc.), los Servicios Compuestos no tienen un **modelo físico asociado**.  
 Sin embargo, para mantener la consistencia de **Model Domain Architecture**, estos servicios:
 
 - se colocan en la carpeta `app/Services/` junto a los demás módulos
@@ -223,25 +223,25 @@ Por ejemplo:
 ```
 app/
 ├── Services/
-│ ├── Credito/
-│ ├── Cliente/
-│ └── Imputacion/ ← Servicio Compuesto
-│ └── ImputacionService.php
+│ ├── Order/
+│ ├── User/
+│ └── Notification/ ← Servicio Compuesto
+│   └── NotificationService.php
 ├── DTO/
-│ ├── Credito/
-│ ├── Cliente/
-│ └── Imputacion/ ← DTO específico
-│ └── ImputacionDTO.php
+│ ├── Order/
+│ ├── User/
+│ └── Notification/ ← DTO específico
+│   └── NotificationDTO.php
 ├── Actions/
-│ ├── Credito/
-│ ├── Cliente/
-│ └── Imputacion/ ← Acciones
-│ ├── EjecutarImputacion.php
-│ └── ValidarImputacion.php
+│ ├── Order/
+│ ├── User/
+│ └── Notification/ ← Acciones
+│   ├── EjecutarNotification.php
+│   └── ValidarNotification.php
 ├── Queries/
-│ ├── Credito/
-│ ├── Cliente/
-│ └── Imputacion/ ← Consultas propias
+│ ├── Order/
+│ ├── User/
+│ └── Notification/ ← Consultas propias
 ```
 
 ### 🧾 ¿Por qué es consistente con MDA?
@@ -284,7 +284,7 @@ A medida que crece el proyecto, solo crecen carpetas dentro del modelo correspon
 
 ### ✓ Navegación inmediata
 
-Todo lo relacionado a `Credito` está en un mismo "dominio de modelo".
+Todo lo relacionado a `Order` está en un mismo "dominio de modelo".
 
 ### ✓ Sin super-repositorios gigantes
 
@@ -305,7 +305,7 @@ Si algún día aparece un dominio grande (por ejemplo, "Finanzas"), puede agrupa
 Controller de crédito:
 
 ```
-$credito = $creditoService->findById($id);
+$order = $orderService->findById($id);
 ```
 
 Service:
@@ -317,17 +317,17 @@ return $this->finder->findById($id);
 Consulta compleja:
 
 ```
-$items = $creditoService->getItemsPagadosConDescuento($id);
+$orders = $orderService->getOrdenesConDescuento();
 ```
 
 Service llama:
 
-* Queries/Credito/GetItemsPagadosConDescuento
+* Queries/Order/getOrdenesConDescuento
 
 Actualización:
 
 ```
-$creditoService->actualizarEstado($id, $dto);
+$orderService->actualizarEstado($id, $dto);
 ```
 
 Service → Action → Repository
