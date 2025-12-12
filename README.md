@@ -69,7 +69,7 @@ app/
     OrderService.php
     ClientService.php
   Models/
-    main/
+    Main/
       Order.php
       User.php
       Product.php
