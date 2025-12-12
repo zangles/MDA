@@ -14,6 +14,11 @@ La **Model Domain Architecture (MDA)** es un enfoque arquitectónico pragmático
 
 MDA organiza el proyecto alrededor de los *modelos centrales* del sistema (por ejemplo: `User`, `Order`, `Product`, etc.), manteniendo una estructura clara, escalable y fácil de navegar incluso en aplicaciones con múltiples bases de datos.
 
+> ⚠️ Nota importante
+> MDA propone una forma organizada de estructurar el código, pero no impone restricciones técnicas rígidas.
+> Define caminos recomendados, no reglas absolutas.
+> El criterio del desarrollador sigue siendo parte central del diseño.
+
 ---
 
 ## 🎯 Objetivo
@@ -407,6 +412,126 @@ Ideal para proyectos:
 No tan ideal en:
 
 * sistemas extremadamente pequeños
+
+---
+
+# 8 Como usar MDA (Recomendaciones y buenas prácticas)
+
+MDA define una estructura clara y responsabilidades bien delimitadas, pero no impone restricciones técnicas rígidas.
+No es una arquitectura que “te impide” hacer cosas, sino una que te sugiere caminos preferidos.
+
+Esta sección describe cómo se espera usar MDA en la práctica, y qué decisiones son recomendadas… aunque no obligatorias.
+
+---
+## 8.1 El camino recomendado
+
+La idea general es:
+
+```
+Controller → Service → (Finder / Query / Action / Repository)
+```
+
+Los controllers deberían delegar toda la lógica a un Service.
+
+Los Services actúan como punto de entrada a un caso de uso.
+
+Desde un Service se puede:
+
+  * leer datos mediante Finders o Queries
+  * ejecutar lógica mediante Actions
+  * persistir mediante Repositories
+
+Este flujo mantiene:
+
+  * trazabilidad
+  * menor acoplamiento
+  * una intención clara del código
+
+---
+
+## 8.2 Reglas basicas no estrictas
+
+MDA no bloquea técnicamente otros accesos.
+
+Por ejemplo:
+
+  * Podés llamar a un `Finder` directamente desde un controller.
+  * Podés ejecutar una `Query` sin pasar por un Service.
+  * Podés reutilizar una `Action` desde distintos lugares.
+
+👉 **Nada lo impide**.
+
+Pero la recomendación es:
+
+  * hacerlo solo cuando haya una razón concreta
+  * entender que es una excepción, no el patrón principal
+  * evitar que se vuelva una práctica constante
+
+Si un acceso directo empieza a repetirse, probablemente:
+
+  * merece su propio Service
+  * o indica que el caso de uso no estaba bien modelado
+
+---
+
+## 8.3 Ubicacion de la lógica de negocio
+
+La lógica de negocio debería vivir fuera de controllers
+
+Preferentemente dentro de:
+
+* Services
+* Actions
+* (o Domain logic si el proyecto lo requiere)
+
+MDA no fuerza el uso de:
+  * Aggregates
+  * Domain Events
+  * Value Objects
+
+Pero no los prohíbe.
+
+Si un proyecto crece y necesita conceptos más avanzados, MDA puede:
+
+  * convivir con ellos
+  * servir como base organizacional
+  * o ser extendido gradualmente
+
+---
+## 8.4 Pragmatismo sobre purismo
+
+MDA nace desde la práctica, no desde la teoría.
+
+Si una regla:
+  * complica innecesariamente el código
+  * retrasa una entrega crítica
+  * agrega fricción sin beneficio claro
+
+Romperla conscientemente es preferible a seguirla a ciegas.
+
+La clave es:
+  * entender por qué existe la recomendación
+  * y qué costo tiene ignorarla
+
+---
+
+## 8.5 MDA es un punto de partida
+
+MDA no intenta:
+
+  * cubrir todos los escenarios posibles
+  * competir con arquitecturas completas como DDD
+  * definir una verdad absoluta
+
+Su objetivo es:
+
+  * ofrecer una base clara y usable
+  * reducir el caos en proyectos reales
+  * dar estructura sin sobreingeniería
+
+Si en algún punto necesitás más, probablemente:
+
+> ya sabés mejor que MDA qué es lo que hace falta.
 
 ---
 
