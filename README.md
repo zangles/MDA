@@ -1,7 +1,11 @@
 <p align="center">
-  <a href="README.md"><img src="https://flagcdn.com/40x30/es.png" alt="Español" width="40" /></a>
+  <a href="README.md">
+    <img src="https://img.shields.io/badge/Español-🇪🇸-red?style=for-the-badge" alt="Español" />
+  </a>
   &nbsp;&nbsp;&nbsp;
-  <a href="README.en.md"><img src="https://flagcdn.com/40x30/us.png" alt="English" width="40" /></a>
+  <a href="README.en.md">
+    <img src="https://img.shields.io/badge/English-🇺🇸-blue?style=for-the-badge" alt="English" />
+  </a>
 </p>
 
 <p align="center">
