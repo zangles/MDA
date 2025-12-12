@@ -1,11 +1,11 @@
 <p align="center">
   <a href="README.md">
-    <img src="https://raw.githubusercontent.com/hjnilsson/country-flags/master/png100px/es.png" 
+    <img src="https://flagcdn.com/40x30/es.png" 
          alt="Español" width="40" />
   </a>
   &nbsp;&nbsp;&nbsp;
   <a href="README.en.md">
-    <img src="https://raw.githubusercontent.com/hjnilsson/country-flags/master/png100px/us.png" 
+    <img src="https://flagcdn.com/40x30/en.png" 
          alt="English" width="40" />
   </a>
 </p>
