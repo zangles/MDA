@@ -64,8 +64,8 @@ app/
     CreditoDetalleRepository.php
   Services/
     Interfaces/
-      ICreditoService.php
-      IClienteService.php
+      CreditoServiceInterface.php
+      ClienteServiceInterface.php
     CreditoService.php
     ClienteService.php
   Models/
