@@ -1,12 +1,10 @@
 <p align="center">
   <a href="README.md">
-    <img src="https://flagcdn.com/40x30/es.png" 
-         alt="Español" width="40" />
+    <img src="https://flagcdn.com/40x30/es.png" alt="Español" width="40" />
   </a>
   &nbsp;&nbsp;&nbsp;
   <a href="README.en.md">
-    <img src="https://flagcdn.com/40x30/en.png" 
-         alt="English" width="40" />
+    <img src="https://flagcdn.com/40x30/us.png" alt="English" width="40" />
   </a>
 </p>
 
