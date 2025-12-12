@@ -15,6 +15,7 @@ The **Model Domain Architecture (MDA)** is a pragmatic architectural approach, i
 MDA organizes the project around the system's *core models* (for example: `User`, `Order`, `Product`, etc.), maintaining a clear, scalable, and easy-to-navigate structure even in applications with multiple databases.
 
 > ⚠️ Important Note
+
 > MDA proposes an organized way to structure code, but does not impose rigid technical restrictions.
 > It defines recommended paths, not absolute rules.
 > Developer discretion remains a central part of the design.

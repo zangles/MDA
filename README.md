@@ -15,6 +15,7 @@ La **Model Domain Architecture (MDA)** es un enfoque arquitectónico pragmático
 MDA organiza el proyecto alrededor de los *modelos centrales* del sistema (por ejemplo: `User`, `Order`, `Product`, etc.), manteniendo una estructura clara, escalable y fácil de navegar incluso en aplicaciones con múltiples bases de datos.
 
 > ⚠️ Nota importante
+
 > MDA propone una forma organizada de estructurar el código, pero no impone restricciones técnicas rígidas.
 > Define caminos recomendados, no reglas absolutas.
 > El criterio del desarrollador sigue siendo parte central del diseño.
