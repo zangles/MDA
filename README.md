@@ -204,13 +204,14 @@ Las búsquedas simples NO se mezclan aquí; van en Finders.
 
 ## 3.5 Actions
 
-Comportamientos modificadores del dominio:
+Las Actions representan un caso de uso completo.
 
-* actualizar una orden
-* recalcular montos
-* crear un cliente
+- Orquestan la ejecución de múltiples Services
+- Pueden leer datos usando Finders o Queries
+- Pueden invocar Services
+- Pueden llamar Repositories para persistencia
 
-Las Actions **usan repositorios** y nunca queries.
+Las Actions **no deben contener lógica de negocio propia del dominio**, sino coordinar la ejecución de piezas específicas.
 
 ---
 
@@ -224,19 +225,16 @@ Separados por modelo.
 
 ## 3.7 Services
 
-Los **orquestadores** del modelo.
+Los Services encapsulan la lógica específica de un modelo o una operación reutilizable.
 
-Un service normalmente hace:
+Un Service puede:
 
-* validar flujo
-* llamar a finders
-* usar queries complejos
-* llamar a actions
-* transformar resultados
+- Usar Finders para lecturas simples
+- Usar Queries para lecturas complejas
+- Ejecutar Repositories para persistencia
+- Aplicar reglas de negocio propias del modelo
 
-Cada Service tiene una interfaz por claridad y testeabilidad.
-
-Aunque algunas veces la interfaz puede omitirse en proyectos simples, en MDA es recomendable porque el Service se vuelve el punto de entrada principal del módulo.
+Los Services **no deben decidir flujos de alto nivel** ni contener lógica de casos de uso compuestos. Eso es responsabilidad de las **Actions** o **Servicios Compuestos**.
 
 ---
 
@@ -255,6 +253,9 @@ Ejemplos típicos de Servicios Compuestos pueden ser:
 - NotificacionesService (usa UserService, PaymentService, etc.)
 - Liquidaciones que combinan múltiples entidades
 - Reportes o sincronizaciones complejas del ecosistema
+
+Los **Servicios Compuestos** suelen ser orquestadores de múltiples Services y/o Actions. En la práctica, estos casos se expresan como **Actions de alto nivel** que encapsulan el flujo completo del caso de uso transversal.
+
 
 ### 📌 ¿Dónde se ubican?
 
@@ -311,13 +312,26 @@ Integrar este tipo de servicios de forma explícita en MDA permite mantener la e
 
 # 4. Relación entre componentes
 
-```
-Controller → Service → (Finder / Query / Action)
+Flujo recomendado:
 
-Action → Repository
-Finder → Eloquent (lecturas simples)
-Query → SQL/Eloquent complejo
 ```
+Controller → Action → Services → (Finder / Query / Repository)
+```
+
+Donde:
+
+- Controller: adapta HTTP y delega
+- Action: representa un caso de uso y orquesta el flujo
+- Services: encapsulan lógica reutilizable (generalmente por modelo)
+- Finder / Query: acceso a datos de lectura
+- Repository: persistencia
+
+Relaciones específicas:
+
+- Action → Services
+- Services → Finder / Query / Repository
+- Finder → Eloquent (lecturas simples)
+- Query → SQL / Eloquent complejo
 
 Las dependencias son unidireccionales, claras y limpias.
 
@@ -409,50 +423,54 @@ Esta sección describe cómo se espera usar MDA en la práctica, y qué decision
 
 La idea general es:
 
-```
-Controller → Service → (Finder / Query / Action / Repository)
-```
+Controller → Action → Services → (Finder / Query / Repository)
 
-Los controllers deberían delegar toda la lógica a un Service.
+Los Controllers no contienen lógica de negocio.
+Delegan la ejecución a una Action.
 
-Los Services actúan como punto de entrada a un caso de uso.
+Las Actions representan casos de uso:
+- coordinan servicios
+- definen el flujo
+- manejan decisiones de alto nivel
 
-Desde un Service se puede:
+Desde una Action se puede:
 
-  * leer datos mediante Finders o Queries
-  * ejecutar lógica mediante Actions
-  * persistir mediante Repositories
+- leer datos mediante Finders o Queries
+- ejecutar lógica reutilizable mediante Services
+- persistir mediante Repositories
 
 Este flujo mantiene:
 
-  * trazabilidad
-  * menor acoplamiento
-  * una intención clara del código
+- trazabilidad
+- menor acoplamiento
+- una intención clara del código
 
 ---
 
-## 8.2 Reglas basicas no estrictas
+## 8.2 Reglas básicas no estrictas
 
 MDA no bloquea técnicamente otros accesos.
 
 Por ejemplo:
 
-  * Podés llamar a un `Finder` directamente desde un controller.
-  * Podés ejecutar una `Query` sin pasar por un Service.
-  * Podés reutilizar una `Action` desde distintos lugares.
+- Podés llamar a una Action directamente desde un Controller
+- Podés reutilizar una Action desde distintos puntos de entrada
+- Podés ejecutar una Query sin pasar por un Service
+- Podés llamar a un Finder directamente desde un Service
 
-👉 **Nada lo impide**.
+👉 Nada lo impide.
 
-Pero la recomendación es:
+La diferencia clave es **la intención**.
 
-  * hacerlo solo cuando haya una razón concreta
-  * entender que es una excepción, no el patrón principal
-  * evitar que se vuelva una práctica constante
+Recomendación:
 
-Si un acceso directo empieza a repetirse, probablemente:
+- Las Actions son puntos de entrada válidos para casos de uso
+- Los accesos directos a Finders / Queries son excepciones
+- Si un acceso directo empieza a repetirse:
+  - probablemente merece su propia Action
+  - o el caso de uso no estaba bien modelado
 
-  * merece su propio Service
-  * o indica que el caso de uso no estaba bien modelado
+MDA prioriza claridad antes que enforcement técnico.
 
 ---
 
