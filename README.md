@@ -238,9 +238,9 @@ Clases enfocadas en **persistencia básica**:
 
 Evitan la sobrecarga de tener 50 métodos especializados dentro del repositorio.
 
-Las consultas complejas NO se mezclan aquí; van en Queries.
+Las consultas de datos NO se mezclan aquí; van en Queries.
 
-Las búsquedas simples NO se mezclan aquí; van en Finders.
+La obtencion de modelos NO se mezclan aquí; van en Finders.
 
 ---
 
@@ -255,6 +255,11 @@ Comportamientos modificadores del dominio:
 > Actions representan operaciones concretas que modifican el estado de uno o varios modelos
 
 Las Actions usan repositorios y nunca queries.
+
+Los Actions son el conceptualmente similares a los que en otras arquitecturas se lllaman:
+
+- Command (Command Pattern) 
+- Application-level Command (CQRS light)
 
 ---
 
