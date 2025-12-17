@@ -109,7 +109,7 @@ app/
       ClientServiceInterface.php
     OrderService.php
     ClientService.php
-  UserCases/  
+  UseCases/  
   Models/
     Main/
       Order.php
@@ -236,6 +236,8 @@ actualizar una orden
 recalcular montos
 crear un cliente
 
+> Actions representan operaciones concretas que modifican el estado de uno o varios modelos
+
 Las Actions usan repositorios y nunca queries.
 
 ---
@@ -298,7 +300,7 @@ Services → Finder / Query
 Services → Action → Repository
 ```
 
-No siempre es necesario un UserCase, asi que puede desde el controller llamar directo al Service
+No siempre es necesario un UseCase, asi que puede desde el controller llamar directo al Service
 
 ```
 Controller → Services
