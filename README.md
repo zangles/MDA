@@ -248,9 +248,9 @@ Las búsquedas simples NO se mezclan aquí; van en Finders.
 
 Comportamientos modificadores del dominio:
 
-actualizar una orden
-recalcular montos
-crear un cliente
+* UpdateOrderAction
+* CreateClientAction
+* DeleteUserAction
 
 > Actions representan operaciones concretas que modifican el estado de uno o varios modelos
 
