@@ -204,14 +204,49 @@ Las búsquedas simples NO se mezclan aquí; van en Finders.
 
 ## 3.5 Actions
 
-Las Actions representan un caso de uso completo.
+En MDA existen dos tipos de Actions con roles distintos:
 
-- Orquestan la ejecución de múltiples Services
-- Pueden leer datos usando Finders o Queries
-- Pueden invocar Services
-- Pueden llamar Repositories para persistencia
+### 📌 UseCase Actions
 
-Las Actions **no deben contener lógica de negocio propia del dominio**, sino coordinar la ejecución de piezas específicas.
+Representan **casos de uso completos del sistema**. Son orquestadores con lógica de flujo (cuándo y en qué orden se ejecuta cada cosa), y se usan típicamente como puntos de entrada desde los Controllers o desde otros UseCase Actions.  
+Una UseCase Action:
+
+  * Orquesta múltiples Services
+  * Toma decisiones de flujo (por ejemplo: reprocesar vs imputar)
+  * Puede usar Finders o Queries para lecturas
+  * Puede delegar operaciones de escritura a **AtomicActions**
+
+> UseCase Actions no deben contener lógica de dominio (cálculos, reglas de modelo). Esa lógica vive en Services.
+
+### 📍 Atomic Actions
+
+Son Actions más **simples y concretas**, enfocadas en una sola operación de escritura o modificación de estado.  
+Una Atomic Action:
+
+  * Ejecuta una operación puntual
+  * Suele delegar en un Repository para persistencia
+  * No decide flujos ni coordina múltiples Services
+
+Ejemplos de uso:
+
+```php
+// UseCase Action
+class ProcesarPagoAction {
+    public function handle(...) {
+        if ($condicion) {
+            $this->funcion1->handle(...);
+        } else {
+            $this->funcion2->handle(...);
+        }
+    }
+}
+
+// Atomic Action
+class CreatePagoAtomicAction {
+    public function handle(...) {
+        $this->pagoRepository->create(...);
+    }
+}
 
 ---
 
@@ -315,25 +350,36 @@ Integrar este tipo de servicios de forma explícita en MDA permite mantener la e
 Flujo recomendado:
 
 ```
-Controller → Action → Services → (Finder / Query / Repository)
+Controller → UseCaseAction → Services 
+Services → Finder / Query
+Services → AtomicAction → Repository
+```
+
+No siempre es necesario un UserCaseAction, asi que puede desde el controller llamar directo al Service
+
+```
+Controller → Services
 ```
 
 Donde:
 
-- Controller: adapta HTTP y delega
-- Action: representa un caso de uso y orquesta el flujo
-- Services: encapsulan lógica reutilizable (generalmente por modelo)
-- Finder / Query: acceso a datos de lectura
-- Repository: persistencia
+  * **Controller**: adapta entrada/salida y delega.
+  * **UseCaseAction**: caso de uso que orquesta el flujo completo y toma decisiones de alto nivel.
+  * **Services**: lógica específica de modelo o reutilizable.
+  * **Finder / Query**: acceso a datos de lectura.
+  * **AtomicAction**: operación específica de escritura o modificación de estado.
+  * **Repository**: persistencia (create/update/delete).
 
 Relaciones específicas:
 
-- Action → Services
-- Services → Finder / Query / Repository
-- Finder → Eloquent (lecturas simples)
-- Query → SQL / Eloquent complejo
+  * UseCaseAction → Services
+  * Services → Finder / Query
+  * Services → AtomicAction
+  * AtomicAction → Repository
+  * Finder → Eloquent (lecturas simples)
+  * Query → SQL/Eloquent complejo
 
-Las dependencias son unidireccionales, claras y limpias.
+Las dependencias deben ser **unidireccionales, claras y limpias**.
 
 ---
 
