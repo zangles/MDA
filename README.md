@@ -17,6 +17,30 @@
 >
 > El camino recomendado es siempre pasar por los Services, y solo en casos puntuales usar accesos directos, con juicio y responsabilidad. Esta base puede expandirse o ajustarse según las necesidades del proyecto.
 
+- [Model Domain Architecture (MDA)](#model-domain-architecture-mda)
+- [🎯 Objetivo](#-objetivo)
+- [1. Filosofía general](#1-filosofía-general)
+- [2. Estructura de carpetas](#2-estructura-de-carpetas)
+- [3. Descripción de cada componente](#3-descripción-de-cada-componente)
+  - [3.1 Models](#31-models)
+  - [3.2 Finders](#32-finders)
+  - [3.3 Queries](#33-queries)
+  - [3.4 Repositories](#34-repositories)
+  - [3.5 Actions](#35-actions)
+  - [3.6 DTOs](#36-dtos)
+  - [3.7 Services](#37-services)
+  - [3.8 Use Case](#38-use-case)
+- [4. Relación entre componentes](#4-relación-entre-componentes)
+- [5. Ventajas de MDA](#5-ventajas-de-mda)
+- [6. Ejemplo resumido de flujo](#6-ejemplo-resumido-de-flujo)
+- [7. Cuándo usar MDA](#7-cuándo-usar-mda)
+- [8. Cómo usar MDA (Recomendaciones y buenas prácticas)](#8-cómo-usar-mda-recomendaciones-y-buenas-prácticas)
+  - [8.1 El camino recomendado](#81-el-camino-recomendado)
+  - [8.2 Reglas básicas no estrictas](#82-reglas-básicas-no-estrictas)
+  - [8.3 Ubicación de la lógica de negocio](#83-ubicacion-de-la-lógica-de-negocio)
+  - [8.4 Pragmatismo sobre purismo](#84-pragmatismo-sobre-purismo)
+  - [8.5 MDA es un punto de partida](#85-mda-es-un-punto-de-partida)
+- [9. Conclusión](#9-conclusión)
 
 # Model Domain Architecture (MDA)
 
@@ -44,6 +68,7 @@ En MDA cada modelo del sistema funciona como un "dominio acotado". No un *bounde
 Cada modelo contiene:
 
 * **Actions** (comportamientos que modifican el estado)
+* **Use Case**
 * **Finders** (consultas simples)
 * **Queries** (consultas complejas)
 * **DTOs**
@@ -84,6 +109,7 @@ app/
       ClientServiceInterface.php
     OrderService.php
     ClientService.php
+  UserCases/  
   Models/
     Main/
       Order.php
@@ -204,50 +230,13 @@ Las búsquedas simples NO se mezclan aquí; van en Finders.
 
 ## 3.5 Actions
 
-En MDA existen dos tipos de Actions con roles distintos:
+Comportamientos modificadores del dominio:
 
-### 📌 UseCase Actions
+actualizar una orden
+recalcular montos
+crear un cliente
 
-Representan **casos de uso completos del sistema**. Son orquestadores con lógica de flujo (cuándo y en qué orden se ejecuta cada cosa), y se usan típicamente como puntos de entrada desde los Controllers o desde otros UseCase Actions.  
-Una UseCase Action:
-
-  * Orquesta múltiples Services
-  * Toma decisiones de flujo (por ejemplo: reprocesar vs imputar)
-  * Puede usar Finders o Queries para lecturas
-  * Puede delegar operaciones de escritura a **AtomicActions**
-
-> UseCase Actions no deben contener lógica de dominio (cálculos, reglas de modelo). Esa lógica vive en Services.
-
-### 📍 Atomic Actions
-
-Son Actions más **simples y concretas**, enfocadas en una sola operación de escritura o modificación de estado.  
-Una Atomic Action:
-
-  * Ejecuta una operación puntual
-  * Suele delegar en un Repository para persistencia
-  * No decide flujos ni coordina múltiples Services
-
-Ejemplos de uso:
-
-```php
-// UseCase Action
-class ProcesarPagoAction {
-    public function handle(...) {
-        if ($condicion) {
-            $this->funcion1->handle(...);
-        } else {
-            $this->funcion2->handle(...);
-        }
-    }
-}
-
-// Atomic Action
-class CreatePagoAtomicAction {
-    public function handle(...) {
-        $this->pagoRepository->create(...);
-    }
-}
-```
+Las Actions usan repositorios y nunca queries.
 
 ---
 
@@ -274,69 +263,22 @@ Los Services **no deben decidir flujos de alto nivel** ni contener lógica de ca
 
 ---
 
-## 3.8 Servicios Compuestos
+## 3.8 Use Case
 
-Además de los servicios que están directamente asociados a un modelo específico, en MDA también se contemplan los **Servicios Compuestos**.
 
-Un Servicio Compuesto corresponde a un caso de uso del sistema que:
+Un **Use Case** corresponde a un caso de uso del sistema que:
 
 - **no representa un único modelo**, sino que combina operaciones sobre múltiples modelos,
 - **agrega lógica de negocio transversal**,
 - y **orquesta llamadas a varios servicios/consultas/repositorios asociados**.
 
-Ejemplos típicos de Servicios Compuestos pueden ser:
+Ejemplos típicos de Use Case pueden ser:
 
 - NotificacionesService (usa UserService, PaymentService, etc.)
 - Liquidaciones que combinan múltiples entidades
 - Reportes o sincronizaciones complejas del ecosistema
 
-Los **Servicios Compuestos** suelen ser orquestadores de múltiples Services y/o Actions. En la práctica, estos casos se expresan como **Actions de alto nivel** que encapsulan el flujo completo del caso de uso transversal.
-
-
-### 📌 ¿Dónde se ubican?
-
-A diferencia de los modelos (como `Order`, `User`, etc.), los Servicios Compuestos no tienen un **modelo físico asociado**.  
-Sin embargo, para mantener la consistencia de **Model Domain Architecture**, estos servicios:
-
-- se colocan en la carpeta `app/Services/` junto a los demás módulos
-- pueden tener su propio conjunto de DTOs, Actions y Queries
-  dentro de las carpetas generales correspondientes, agrupados por el nombre del caso de uso
-
-Por ejemplo:
-
-```
-app/
-├── Services/
-│ ├── Order/
-│ ├── User/
-│ └── Notification/ ← Servicio Compuesto
-│   └── NotificationService.php
-├── DTO/
-│ ├── Order/
-│ ├── User/
-│ └── Notification/ ← DTO específico
-│   └── NotificationDTO.php
-├── Actions/
-│ ├── Order/
-│ ├── User/
-│ └── Notification/ ← Acciones
-│   ├── EjecutarNotification.php
-│   └── ValidarNotification.php
-├── Queries/
-│ ├── Order/
-│ ├── User/
-│ └── Notification/ ← Consultas propias
-```
-
-### 🧾 ¿Por qué es consistente con MDA?
-
-Aunque un Servicio Compuesto no tiene un modelo Eloquent asociado, sigue:
-
-- la **misma lógica estructural** que los módulos por modelo,
-- la organización por **tipo de responsabilidad** (DTOs, Actions, Queries, Services),
-- y respeta que cada pieza forme parte de un **área funcional cohesionada** del negocio.
-
-Los Servicios Compuestos son conceptualmente similares a lo que en otras arquitecturas se conoce como:
+Los Use Case son conceptualmente similares a lo que en otras arquitecturas se conoce como:
 
 - Domain Services  
 - Application Services (en Clean Architecture)  
@@ -351,12 +293,12 @@ Integrar este tipo de servicios de forma explícita en MDA permite mantener la e
 Flujo recomendado:
 
 ```
-Controller → UseCaseAction → Services 
+Controller → Use Case → Services 
 Services → Finder / Query
-Services → AtomicAction → Repository
+Services → Action → Repository
 ```
 
-No siempre es necesario un UserCaseAction, asi que puede desde el controller llamar directo al Service
+No siempre es necesario un UserCase, asi que puede desde el controller llamar directo al Service
 
 ```
 Controller → Services
@@ -365,18 +307,18 @@ Controller → Services
 Donde:
 
   * **Controller**: adapta entrada/salida y delega.
-  * **UseCaseAction**: caso de uso que orquesta el flujo completo y toma decisiones de alto nivel.
+  * **UseCase**: caso de uso que orquesta el flujo completo y toma decisiones de alto nivel.
   * **Services**: lógica específica de modelo o reutilizable.
   * **Finder / Query**: acceso a datos de lectura.
-  * **AtomicAction**: operación específica de escritura o modificación de estado.
+  * **Action**: operación específica de escritura o modificación de estado.
   * **Repository**: persistencia (create/update/delete).
 
 Relaciones específicas:
 
-  * UseCaseAction → Services
+  * UseCase → Services
   * Services → Finder / Query
-  * Services → AtomicAction
-  * AtomicAction → Repository
+  * Services → Atomic
+  * Atomic → Repository
   * Finder → Eloquent (lecturas simples)
   * Query → SQL/Eloquent complejo
 
