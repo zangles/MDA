@@ -141,13 +141,15 @@ Ventajas:
 
 ## 3.2 Finders
 
-Clases con métodos de lecturas simples:
+> Un objeto cuyo propósito es encontrar y devolver entidades o colecciones del dominio, encapsulando cómo se accede a los datos.
+
+
 
 * `findById($id)`
 * `findByUserId($userId)`
-* `findByOrderId($orderId)`
+* `findByLastOrderWithPendingItemsByUserId($userId$)`
 
-Todas las búsquedas simples que no requieren joins elaborados o lógica compleja.
+Todos pueden ser complejos y siguen siendo Finders.
 
 Se agrupan **por modelo**, en un único archivo por modelo:
 
@@ -189,9 +191,17 @@ En otras palabras:
 >MDA define dónde viven las cosas, pero no cómo deben verse exactamente.
 >Cada proyecto puede ajustar el nivel de granularidad que prefiera.
 
+
+Regla general:
+
+> * Si devuelve entidades: Finder
+> * Si devuelve datos para mostrar/usar: Query
+
 ---
 
 ## 3.3 Queries
+
+> Un objeto orientado a lecturas específicas para consumo, normalmente optimizadas, agregadas o proyectadas.
 
 Consultas SQL/Eloquent complejas:
 
@@ -207,6 +217,12 @@ Se agrupan por **carpetas de modelo**, por ejemplo:
 Queries/Order/OrderQueries.php
 Queries/User/UserQueries.php
 ```
+
+Ejemplos de funciones:
+
+* getCreditsSummaryByClientId($clientId)
+* getTotalClientOrdersForDashboard($clientId)
+
 
 Los queries están aislados porque **es normal** que crezcan mucho.
 
