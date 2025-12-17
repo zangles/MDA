@@ -259,7 +259,7 @@ Un Service puede:
 - Ejecutar Repositories para persistencia
 - Aplicar reglas de negocio propias del modelo
 
-Los Services **no deben decidir flujos de alto nivel** ni contener lógica de casos de uso compuestos. Eso es responsabilidad de las **Actions** o **Servicios Compuestos**.
+Los Services **no deben decidir flujos de alto nivel** ni contener lógica de casos de uso compuestos. Eso es responsabilidad de las **Actions** o **User Cases**.
 
 ---
 
@@ -317,8 +317,8 @@ Relaciones específicas:
 
   * UseCase → Services
   * Services → Finder / Query
-  * Services → Atomic
-  * Atomic → Repository
+  * Services → Action
+  * Action → Repository
   * Finder → Eloquent (lecturas simples)
   * Query → SQL/Eloquent complejo
 
