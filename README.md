@@ -261,7 +261,7 @@ Un Service puede:
 - Ejecutar Repositories para persistencia
 - Aplicar reglas de negocio propias del modelo
 
-Los Services **no deben decidir flujos de alto nivel** ni contener lógica de casos de uso compuestos. Eso es responsabilidad de las **Actions** o **User Cases**.
+Los Services **no deben decidir flujos de alto nivel** ni contener lógica de casos de uso compuestos. Eso es responsabilidad de las **Actions** o **Use Cases**.
 
 ---
 
