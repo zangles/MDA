@@ -30,6 +30,7 @@
   - [3.6 DTOs](#36-dtos)
   - [3.7 Services](#37-services)
   - [3.8 Use Case](#38-use-case)
+  - [3.9 Extensiones y componentes adicionales](#39-extensiones-y-componentes-adicionales)
 - [4. Relación entre componentes](#4-relación-entre-componentes)
 - [5. Ventajas de MDA](#5-ventajas-de-mda)
 - [6. Ejemplo resumido de flujo](#6-ejemplo-resumido-de-flujo)
@@ -310,6 +311,38 @@ Los Use Case son conceptualmente similares a lo que en otras arquitecturas se co
 - Casos de uso transversales que requieren coordinación de varios modelos.
 
 Integrar este tipo de clases de forma explícita en MDA permite mantener la estructura **uniforme, predecible y escalable** sin forzar que todo dependa de un único modelo.
+
+---
+
+## 3.9 Extensiones y componentes adicionales
+
+MDA define las capas fundamentales, pero **no pretende ser exhaustivo**.
+
+Si tu proyecto necesita componentes que no están aquí mencionados
+
+(Value Objects, Validators, Rules, Policies, etc.),
+
+podés extender la arquitectura con criterio:
+
+- Creá carpetas en la raíz solo cuando el concepto no encaje claramente en UseCases, Actions, Services, Models o Repositories
+- Agrupá por criterio lógico (funcional o técnico)
+- Mantené la coherencia con la estructura existente
+
+Algunos conceptos pueden vivir directamente en la raíz, mientras que otros pueden agruparse bajo un contenedor semántico común.
+
+**Ejemplos válidos:**
+
+- `app/ValueObjects/` para objetos inmutables transversales
+- `app/Validators/` para validaciones complejas del dominio
+- `app/DomainLogic/Discounts/` para lógica de negocio especializada
+
+**Principio guía:**
+
+> MDA te da la estructura base para organizar tu código. <br>
+> Cada proyecto tiene necesidades específicas.<br>
+> Extendé la arquitectura naturalmente cuando lo necesites,<br>
+> pero siempre preguntándote:<br>
+> “¿esto tiene entidad propia o debería vivir dentro de un Service, Action o Use Case?”
 
 ---
 
