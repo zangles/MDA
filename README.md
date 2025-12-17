@@ -338,10 +338,10 @@ Algunos conceptos pueden vivir directamente en la raíz, mientras que otros pued
 
 **Principio guía:**
 
-> MDA te da la estructura base para organizar tu código. <br>
-> Cada proyecto tiene necesidades específicas.<br>
-> Extendé la arquitectura naturalmente cuando lo necesites,<br>
-> pero siempre preguntándote:<br>
+> MDA te da la estructura base para organizar tu código.  
+> Cada proyecto tiene necesidades específicas.  
+> Extendé la arquitectura naturalmente cuando lo necesites,  
+> pero siempre preguntándote:  
 > “¿esto tiene entidad propia o debería vivir dentro de un Service, Action o Use Case?”
 
 ---
