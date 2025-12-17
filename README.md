@@ -268,7 +268,7 @@ Separados por modelo.
 
 ## 3.7 Services
 
-Los Services encapsulan la lógica específica de un modelo o una operación reutilizable.
+Los Services encapsulan la lógica específica de un modelo.
 
 Un Service puede:
 
@@ -292,7 +292,9 @@ Un **Use Case** corresponde a un caso de uso del sistema que:
 
 Ejemplos típicos de Use Case pueden ser:
 
-- NotificacionesService (usa UserService, PaymentService, etc.)
+- CheckoutProcess
+- CloseAccountProcess
+- ImportExternalData
 - Liquidaciones que combinan múltiples entidades
 - Reportes o sincronizaciones complejas del ecosistema
 
@@ -302,7 +304,7 @@ Los Use Case son conceptualmente similares a lo que en otras arquitecturas se co
 - Application Services (en Clean Architecture)  
 - Casos de uso transversales que requieren coordinación de varios modelos.
 
-Integrar este tipo de servicios de forma explícita en MDA permite mantener la estructura **uniforme, predecible y escalable** sin forzar que todo dependa de un único modelo.
+Integrar este tipo de clases de forma explícita en MDA permite mantener la estructura **uniforme, predecible y escalable** sin forzar que todo dependa de un único modelo.
 
 ---
 
