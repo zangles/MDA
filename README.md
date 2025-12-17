@@ -432,17 +432,17 @@ Esta sección describe cómo se espera usar MDA en la práctica, y qué decision
 
 La idea general es:
 
-Controller → Action → Services → (Finder / Query / Repository)
+Controller → Use Case → Services → (Finder / Query / Repository)
 
 Los Controllers no contienen lógica de negocio.
-Delegan la ejecución a una Action.
+Delegan la ejecución a una Use Case o un servicio.
 
-Las Actions representan casos de uso:
+Los Use Case:
 - coordinan servicios
 - definen el flujo
 - manejan decisiones de alto nivel
 
-Desde una Action se puede:
+Desde un Use Case se puede:
 
 - leer datos mediante Finders o Queries
 - ejecutar lógica reutilizable mediante Services
@@ -473,10 +473,9 @@ La diferencia clave es **la intención**.
 
 Recomendación:
 
-- Las Actions son puntos de entrada válidos para casos de uso
 - Los accesos directos a Finders / Queries son excepciones
 - Si un acceso directo empieza a repetirse:
-  - probablemente merece su propia Action
+  - probablemente merece su propia Use Case
   - o el caso de uso no estaba bien modelado
 
 MDA prioriza claridad antes que enforcement técnico.
@@ -490,7 +489,7 @@ La lógica de negocio debería vivir fuera de controllers
 Preferentemente dentro de:
 
 * Services
-* Actions
+* Use Case
 * (o Domain logic si el proyecto lo requiere)
 
 MDA no fuerza el uso de:
