@@ -256,7 +256,7 @@ Comportamientos modificadores del dominio:
 
 Las Actions usan repositorios y nunca queries.
 
-Los Actions son el conceptualmente similares a los que en otras arquitecturas se lllaman:
+Los Actions son conceptualmente similares a los que en otros lugares se llama:
 
 - Command (Command Pattern) 
 - Application-level Command (CQRS light)
