@@ -247,6 +247,7 @@ class CreatePagoAtomicAction {
         $this->pagoRepository->create(...);
     }
 }
+```
 
 ---
 
