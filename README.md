@@ -266,9 +266,32 @@ Los Actions son conceptualmente similares a los que en otros lugares se llama:
 
 ## 3.6 DTOs
 
-Objetos para transportar datos, ordenar requests y respuestas.
+Los DTOs (Data Transfer Objects) se utilizan para transportar datos entre capas, ordenar requests y respuestas, y definir contratos claros entre componentes.
 
-Separados por modelo.
+En MDA, el uso de DTOs es **recomendado pero no obligatorio**.
+
+Al igual que otros componentes estan separados por modelo.
+
+**Recomendaciones de uso**
+
+- Se recomienda utilizar DTOs en Actions que persisten o modifican estado, especialmente cuando reciben múltiples datos.
+  ```
+  UpdateUserAction::execute(UpdateUserDTO $dto);
+  ```  
+- Los DTOs son útiles como contratos entre:
+  - Controller → Use Case
+  - Use Case → Action
+  - Service → Action  
+- En proyectos donde se busca aislar la base de datos o el ORM, los Repositories pueden devolver DTOs en lugar de modelos, aunque esto no es un requisito para MDA.  
+- Los DTOs también pueden utilizarse como objetos de salida (Response DTOs) para evitar exponer directamente modelos o estructuras internas.
+
+**Consideraciones**
+
+- No es necesario utilizar DTOs en todos los casos.
+- Para flujos simples, el uso directo de parámetros o modelos puede ser suficiente.
+- El objetivo de los DTOs en MDA es **mejorar claridad y mantenibilidad**, no agregar complejidad innecesaria.
+
+> Si sentís que estás creando DTOs “por crear”, probablemente no los necesites ahí.
 
 ---
 
