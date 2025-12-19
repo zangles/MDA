@@ -8,19 +8,44 @@
   <img src="logo.jpg" alt="Model Domain Architecture Logo" width="1024">
 </p>
 
-> **Important note**
+> **Important Note**
 >
-> Model Domain Architecture (MDA) is a **pragmatic and flexible architectural approach**, inspired by principles from Domain-Driven Design and Clean Architecture, but **adapted to real-world Laravel projects**.
+> Model Domain Architecture (MDA) is a **pragmatic and flexible** architectural approach, inspired by Domain-Driven Design and Clean Architecture principles, but **adapted to real-world Laravel project needs**.
 >
-> Its goal is to serve as a **clear and practical starting point**, not as a rigid or exhaustive framework like DDD, Hexagonal, or Clean Architecture.  
-> MDA defines a recommended organization of layers and responsibilities, **but it does not technically prevent direct access to internal components** (Finder, Query, Action, etc.).
+> Its goal is to be a **clear and practical starting point**, not a rigid or exhaustive framework like DDD, Hexagonal, or Clean Architecture.  
+> MDA defines a recommended organization of layers and responsibilities, **but does not technically prevent direct access to internal components** (Finder, Query, Action, etc.).  
 >
-> The recommended path is to always go through Services, and only in specific cases use direct access, with judgment and responsibility. This foundation can be expanded or adjusted according to the project’s needs.
+> The recommended path is always to go through Services, and only in specific cases use direct access, with judgment and responsibility. This foundation can be expanded or adjusted according to the project's needs.
 
+- [Model Domain Architecture (MDA)](#model-domain-architecture-mda)
+- [🎯 Goal](#-goal)
+- [1. General Philosophy](#1-general-philosophy)
+- [2. Folder Structure](#2-folder-structure)
+- [3. Description of Each Component](#3-description-of-each-component)
+  - [3.1 Models](#31-models)
+  - [3.2 Finders](#32-finders)
+  - [3.3 Queries](#33-queries)
+  - [3.4 Repositories](#34-repositories)
+  - [3.5 Actions](#35-actions)
+  - [3.6 DTOs](#36-dtos)
+  - [3.7 Services](#37-services)
+  - [3.8 Use Cases](#38-use-cases)
+  - [3.9 Extensions and Additional Components](#39-extensions-and-additional-components)
+- [4. Relationship Between Components](#4-relationship-between-components)
+- [5. MDA Advantages](#5-mda-advantages)
+- [6. Summarized Flow Example](#6-summarized-flow-example)
+- [7. When to Use MDA](#7-when-to-use-mda)
+- [8. How to Use MDA (Recommendations and Best Practices)](#8-how-to-use-mda-recommendations-and-best-practices)
+  - [8.1 The Recommended Path](#81-the-recommended-path)
+  - [8.2 Non-Strict Basic Rules](#82-non-strict-basic-rules)
+  - [8.3 Business Logic Placement](#83-business-logic-placement)
+  - [8.4 Pragmatism Over Purism](#84-pragmatism-over-purism)
+  - [8.5 MDA is a Starting Point](#85-mda-is-a-starting-point)
+- [9. Conclusion](#9-conclusion)
 
-## Model Domain Architecture (MDA)
+# Model Domain Architecture (MDA)
 
-The **Model Domain Architecture (MDA)** is a pragmatic architectural approach, inspired by Domain-Driven Design (DDD) and Clean Architecture principles, but specifically adapted to Laravel projects where the natural separation occurs by **models** rather than by complex conceptual domains.
+**Model Domain Architecture (MDA)** is a pragmatic architectural approach, inspired by Domain-Driven Design (DDD) and Clean Architecture principles, but specifically adapted to Laravel projects where the natural separation occurs by **models** rather than by complex conceptual domains.
 
 MDA organizes the project around the system's *core models* (for example: `User`, `Order`, `Product`, etc.), maintaining a clear, scalable, and easy-to-navigate structure even in applications with multiple databases.
 
@@ -39,11 +64,12 @@ To provide an architecture that is:
 
 # 1. General Philosophy
 
-In MDA, each system model functions as a “bounded domain.” Not a *bounded context* as in DDD, but a **functional area delimited by the model itself and its database**.
+In MDA, each system model functions as a "bounded domain." Not a *bounded context* as in DDD, but a **functional area delimited by the model itself and its database**.
 
 Each model contains:
 
-* **Actions** (behaviors that modify the state)
+* **Actions** (behaviors that modify state)
+* **Use Cases**
 * **Finders** (simple queries)
 * **Queries** (complex queries)
 * **DTOs**
@@ -84,6 +110,7 @@ app/
       ClientServiceInterface.php
     OrderService.php
     ClientService.php
+  UseCases/  
   Models/
     Main/
       Order.php
@@ -93,7 +120,9 @@ app/
       Delivery.php
 ```
 
-> Note: Models are grouped by database when the application uses multiple connections. This is a valid exception because it responds to infrastructure needs, not domain needs.
+> Note:
+> Models are grouped by database when the application uses multiple connections.
+> This is a valid exception because it responds to infrastructure needs, not domain needs.
 
 ---
 
@@ -114,13 +143,13 @@ Advantages:
 
 ## 3.2 Finders
 
-Classes with simple read methods:
+> An object whose purpose is to find and return domain entities or collections, encapsulating how data is accessed.
 
 * `findById($id)`
 * `findByUserId($userId)`
-* `findByOrderId($orderId)`
+* `findByLastOrderWithPendingItemsByUserId($userId)`
 
-All simple searches that do not require elaborate joins or complex logic.
+All can be complex and still be Finders.
 
 They are grouped **by model**, in a single file per model:
 
@@ -131,16 +160,15 @@ UserFinder.php
 
 🔀 Possible Variations in Finder Organization
 
-By default, MDA suggests grouping all simple read methods for a model inside a single file, for example:
-
+By default, MDA proposes grouping all simple read methods for a model in a single file, for example:
 
 * UserFinder.php
 * OrderFinder.php
 
-This keeps the directory structure lightweight and avoids creating dozens of tiny classes.
+This keeps the directory tree lightweight and avoids creating dozens of small classes.
 
-However, this is not the only valid approach.
-If your team prefers a more granular structure —for example, one Finder class per query:
+However, this is not the only valid way to organize Finders.
+If your team prefers a more granular structure—for example, one Finder class per query:
 
 ```
 FindUserById.php
@@ -150,22 +178,29 @@ FindOrdersByCustomer.php
 
 This is also fully compatible with MDA.
 
-The core idea is that:
+The central idea is that:
 
-Simple queries should be separated from services and business logic.
+Simple queries should be separated from the service and business logic.
 
 The internal organization should be consistent for your project.
 
-Your team should be able to adjust or scale the structure without friction.
+The team can modify or scale the structure without friction.
 
 In other words:
 
->MDA defines where things live, but not exactly how they must look.
->Each project can choose its preferred level of granularity.
+> MDA defines where things live, but not exactly how they should look.
+> Each project can adjust the level of granularity it prefers.
+
+General rule:
+
+> * If it returns entities: Finder
+> * If it returns data to display/use: Query
 
 ---
 
 ## 3.3 Queries
+
+> An object oriented to specific reads for consumption, typically optimized, aggregated, or projected.
 
 Complex SQL/Eloquent queries:
 
@@ -182,7 +217,12 @@ Queries/Order/OrderQueries.php
 Queries/User/UserQueries.php
 ```
 
-Queries are isolated because it is **normal** for them to grow significantly.
+Function examples:
+
+* getCreditsSummaryByClientId($clientId)
+* getTotalClientOrdersForDashboard($clientId)
+
+Queries are isolated because **it is normal** for them to grow significantly.
 
 ---
 
@@ -194,10 +234,11 @@ Classes focused on **basic persistence**:
 * `update()`
 * `delete()`
 
-They avoid the overload of having 50 specialized methods within the repository.
+They avoid the overhead of having 50 specialized methods within the repository.
 
-Complex queries are NOT mixed here; they go in Queries.
-Simple searches are NOT mixed here; they go in Finders.
+Data queries are NOT mixed here; they go in Queries.
+
+Model retrieval is NOT mixed here; they go in Finders.
 
 ---
 
@@ -205,120 +246,160 @@ Simple searches are NOT mixed here; they go in Finders.
 
 Domain modifier behaviors:
 
-* update an order
-* recalculate amounts
-* create a client
+* UpdateOrderAction
+* CreateClientAction
+* DeleteUserAction
 
-Actions **use repositories** and never queries.
+> Actions represent concrete operations that modify the state of one or more models
+
+Actions use repositories and never queries.
+
+Actions are conceptually similar to what is called in other places:
+
+- Command (Command Pattern) 
+- Application-level Command (CQRS light)
 
 ---
 
 ## 3.6 DTOs
 
-Objects for transporting data, ordering requests and responses.
+DTOs (Data Transfer Objects) are used to transport data between layers, organize requests and responses, and define clear contracts between components.
 
-Separated by model.
+In MDA, the use of DTOs is **recommended but not mandatory**.
+
+Like other components, they are separated by model.
+
+**Usage Recommendations**
+
+- DTOs are recommended in Actions that persist or modify state, especially when receiving multiple data points.
+  ```
+  UpdateUserAction::execute(UpdateUserDTO $dto);
+  ```  
+- DTOs are useful as contracts between:
+  - Controller → Use Case
+  - Use Case → Action
+  - Service → Action  
+- In projects that seek to isolate the database or ORM, Repositories can return DTOs instead of models, although this is not a requirement for MDA.  
+- DTOs can also be used as output objects (Response DTOs) to avoid directly exposing models or internal structures.
+
+**Considerations**
+
+- It is not necessary to use DTOs in all cases.
+- For simple flows, direct use of parameters or models may be sufficient.
+- The goal of DTOs in MDA is to **improve clarity and maintainability**, not to add unnecessary complexity.
+
+> If you feel you're creating DTOs "just because," you probably don't need them there.
 
 ---
 
 ## 3.7 Services
 
-The model's **orchestrators**.
+Services encapsulate model-specific logic.
 
-A service typically does:
+A Service can:
 
-* validate flow
-* call finders
-* use complex queries
-* call actions
-* transform results
+- Use Finders for simple reads
+- Use Queries for complex reads
+- Execute Repositories for persistence
+- Apply business rules specific to the model
 
-Each Service has an interface for clarity and testability.
-
-Although the interface can sometimes be omitted in simple projects, in MDA it is recommended because the Service becomes the main entry point of the module.
+Services **should not decide high-level flows** or contain composite use case logic. That is the responsibility of **Actions** or **Use Cases**.
 
 ---
 
-## 3.8 Composite Services
+## 3.8 Use Cases
 
-In addition to services that are directly associated with a specific model, **Composite Services** are also contemplated in MDA.
+A **Use Case** corresponds to a system use case that:
 
-A Composite Service corresponds to a system use case that:
+- **does not represent a single model**, but combines operations over multiple models,
+- **adds cross-cutting business logic**,
+- and **orchestrates calls to several associated services/queries/repositories**.
 
-* **does not represent a single model**, but combines operations over multiple models,
-* **adds cross-cutting business logic**,
-* and **orchestrates calls to several associated services/queries/repositories**.
+Typical examples of Use Cases can be:
 
-Typical examples of Composite Services might be:
+- CheckoutProcess
+- CloseAccountProcess
+- ImportExternalData
+- Settlements that combine multiple entities
+- Complex ecosystem reports or synchronizations
 
-* NotificationService (uses UserService, PaymentService, etc.)
-* Settlements that combine multiple entities
-* Complex ecosystem reports or synchronizations
+Use Cases are conceptually similar to what is known in other architectures as:
 
-### 📌 Where are they located?
+- Domain Services  
+- Application Services (in Clean Architecture)  
+- Cross-cutting use cases that require coordination of multiple models.
 
-Unlike models (like `Order`, `User`, etc.), Composite Services do not have an **associated physical model**.
-
-However, to maintain the consistency of **Model Domain Architecture**, these services:
-
-* are placed in the `app/Services/` folder along with the other modules
-* may have their own set of DTOs, Actions, and Queries within the corresponding general folders, grouped by the use case name
-
-For example:
-
-```
-app/
-├── Services/
-│ ├── Order/
-│ ├── User/
-│ └── Notification/ ← Servicio Compuesto
-│   └── NotificationService.php
-├── DTO/
-│ ├── Order/
-│ ├── User/
-│ └── Notification/ ← DTO específico
-│   └── NotificationDTO.php
-├── Actions/
-│ ├── Order/
-│ ├── User/
-│ └── Notification/ ← Acciones
-│   ├── EjecutarNotification.php
-│   └── ValidarNotification.php
-├── Queries/
-│ ├── Order/
-│ ├── User/
-│ └── Notification/ ← Consultas propias
-```
-
-### 🧾 Why is it consistent with MDA?
-
-Although a Composite Service does not have an associated Eloquent model, it follows:
-
-* the **same structural logic** as the model modules,
-* the organization by **type of responsibility** (DTOs, Actions, Queries, Services),
-* and respects that each piece is part of a **cohesive functional area** of the business.
-
-Composite Services are conceptually similar to what is known in other architectures as:
-
-* Domain Services
-* Application Services ( in Clean Architecture)
-* Cross-cutting use cases that require coordination of several models.
-
-Explicitly integrating this type of service into MDA allows the structure to be kept **uniform, predictable, and scalable** without forcing everything to depend on a single model.
+Explicitly integrating this type of class into MDA allows maintaining a **uniform, predictable, and scalable** structure without forcing everything to depend on a single model.
 
 ---
 
-# 4. Relationship between Components
+## 3.9 Extensions and Additional Components
+
+MDA defines the fundamental layers, but **does not claim to be exhaustive**.
+
+If your project needs components not mentioned here
+
+(Value Objects, Validators, Rules, Policies, etc.),
+
+you can extend the architecture with judgment:
+
+- Create folders at the root only when the concept does not clearly fit into UseCases, Actions, Services, Models, or Repositories
+- Group by logical criteria (functional or technical)
+- Maintain consistency with the existing structure
+
+Some concepts can live directly at the root, while others can be grouped under a common semantic container.
+
+**Valid examples:**
+
+- `app/ValueObjects/` for cross-cutting immutable objects
+- `app/Validators/` for complex domain validations
+- `app/DomainLogic/Discounts/` for specialized business logic
+
+**Guiding principle:**
+
+> MDA gives you the base structure to organize your code.  
+> Each project has specific needs.  
+> Extend the architecture naturally when needed,  
+> but always asking yourself:  
+> "Does this have its own entity or should it live within a Service, Action, or Use Case?"
+
+---
+
+# 4. Relationship Between Components
+
+Recommended flow:
 
 ```
-Controller → Service → (Finder / Query / Action)
-
-Action → Repository
-Finder → Eloquent (lecturas simples)
-Query → SQL/Eloquent complejo
+Controller → Use Case → Services 
+Services → Finder / Query
+Services → Action → Repository
 ```
 
-Dependencies are unidirectional, clear, and clean.
+A Use Case is not always necessary, so you can call the Service directly from the controller:
+
+```
+Controller → Services
+```
+
+Where:
+
+  * **Controller**: adapts input/output and delegates.
+  * **Use Case**: use case that orchestrates the complete flow and makes high-level decisions.
+  * **Services**: model-specific or reusable logic.
+  * **Finder / Query**: read data access.
+  * **Action**: specific write or state modification operation.
+  * **Repository**: persistence (create/update/delete).
+
+Specific relationships:
+
+  * Use Case → Services
+  * Services → Finder / Query
+  * Services → Action
+  * Action → Repository
+  * Finder → Eloquent (simple reads)
+  * Query → Complex SQL/Eloquent
+
+Dependencies must be **unidirectional, clear, and clean**.
 
 ---
 
@@ -330,7 +411,7 @@ As the project grows, only folders within the corresponding model grow.
 
 ### ✓ Immediate Navigation
 
-Everything related to `Order` is in the same “model domain.”
+Everything related to `Order` is in the same "model domain."
 
 ### ✓ No Giant Super-Repositories
 
@@ -342,7 +423,7 @@ Many projects do not have well-defined business domains to apply full DDD.
 
 ### ✓ Compatible with Partial DDD
 
-If a large domain appears one day (for example, “Finance”), it can group several models under one context.
+If a large domain appears one day (for example, "Finance"), it can group several models under one context.
 
 ---
 
@@ -368,9 +449,7 @@ $orders = $orderService->getOrdenesConDescuento();
 
 Service calls:
 
-```
 * Queries/Order/getOrdenesConDescuento
-```
 
 Update:
 
@@ -392,90 +471,97 @@ Ideal for projects:
 * with a need for order and scalability
 * where full DDD is too much
 
-Not ideal in:
+Not ideal for:
 
 * extremely small systems
 
 ---
-# 8 How to Use MDA (Recommendations and Best Practices)
+
+# 8. How to Use MDA (Recommendations and Best Practices)
 
 MDA defines a clear structure and well-defined responsibilities, but does not impose rigid technical restrictions.
 It is not an architecture that "prevents you" from doing things, but one that suggests preferred paths.
 
-This section describes how MDA is expected to be used in practice, and what decisions are recommended... though not mandatory.
+This section describes how MDA is expected to be used in practice, and what decisions are recommended… though not mandatory.
 
 ---
+
 ## 8.1 The Recommended Path
 
 The general idea is:
 
-Controller → Service → (Finder / Query / Action / Repository)
+Controller → Use Case → Services → (Finder / Query / Repository)
 
-Controllers should delegate all logic to a Service.
+Controllers do not contain business logic.
+They delegate execution to a Use Case or a service.
 
-Services act as the entry point to a use case.
+Use Cases:
+- coordinate services
+- define the flow
+- handle high-level decisions
 
-From a Service, you can:
+From a Use Case you can:
 
-* read data using Finders or Queries
-* execute logic using Actions
-* persist using Repositories
+- read data using Finders or Queries
+- execute reusable logic using Services
+- persist using Repositories
 
 This flow maintains:
 
-* traceability
-* lower coupling
-* clear code intent
+- traceability
+- lower coupling
+- clear code intent
 
 ---
 
-## 8.2 Soft Rules, Not Hard Constraints
+## 8.2 Non-Strict Basic Rules
 
 MDA does not technically block other accesses.
 
 For example:
 
-  * You can call a `Finder` directly from a controller.
-  * You can execute a `Query` without going through a Service.
-  * You can reuse an `Action` from different places.
+- You can call an Action directly from a Controller
+- You can reuse an Action from different entry points
+- You can execute a Query without going through a Service
+- You can call a Finder directly from a Service
 
-👉 **Nothing prevents it**.
+👉 Nothing prevents it.
 
-But the recommendation is to:
+The key difference is **intent**.
 
-* do it only when there is a concrete reason
-* understand that it is an exception, not the main pattern
-* avoid letting it become a constant practice
+Recommendation:
 
-If a direct access starts to be repeated, it probably:
+- Direct access to Finders / Queries are exceptions
+- If direct access starts to repeat:
+  - it probably deserves its own Use Case
+  - or the use case was not well modeled
 
-* deserves its own Service
-* or indicates that the use case was not well modeled
+MDA prioritizes clarity over technical enforcement.
 
 ---
 
 ## 8.3 Business Logic Placement
 
-Business logic should live outside of controllers.
+Business logic should live outside of controllers
 
 Preferably within:
 
 * Services
-* Actions
+* Use Cases
 * (or Domain logic if the project requires it)
 
-MDA does not enforce the use of:
-* Aggregates
-* Domain Events
-* Value Objects
+MDA does not force the use of:
+  * Aggregates
+  * Domain Events
+  * Value Objects
 
 But it does not prohibit them.
 
-If a project grows and requires more advanced concepts, MDA can:
+If a project grows and needs more advanced concepts, MDA can:
 
-* coexist with them
-* serve as an organizational base
-* or be gradually extended
+  * coexist with them
+  * serve as an organizational base
+  * or be gradually extended
 
 ---
 
@@ -484,15 +570,15 @@ If a project grows and requires more advanced concepts, MDA can:
 MDA is born from practice, not from theory.
 
 If a rule:
-* unnecessarily complicates the code
-* delays a critical delivery
-* adds friction without clear benefit
+  * unnecessarily complicates the code
+  * delays a critical delivery
+  * adds friction without clear benefit
 
 Consciously breaking it is preferable to following it blindly.
 
-The key is to:
-* understand why the recommendation exists
-* and what the cost of ignoring it is
+The key is:
+  * understanding why the recommendation exists
+  * and what the cost of ignoring it is
 
 ---
 
@@ -500,15 +586,15 @@ The key is to:
 
 MDA does not attempt to:
 
-* cover all possible scenarios
-* compete with complete architectures like DDD
-* define an absolute truth
+  * cover all possible scenarios
+  * compete with complete architectures like DDD
+  * define an absolute truth
 
-Its goal is to:
+Its goal is:
 
-* offer a clear and usable base
-* reduce chaos in real projects
-* provide structure without over-engineering
+  * offer a clear and usable base
+  * reduce chaos in real projects
+  * provide structure without over-engineering
 
 If at some point you need more, you probably:
 
@@ -518,8 +604,8 @@ If at some point you need more, you probably:
 
 # 9. Conclusion
 
-The **Model Domain Architecture (MDA)** offers a perfect balance between organization, scalability, and simplicity. Its fundamental premise is that models are the central axis of the design, and everything related to a model lives alongside it.
-
+**Model Domain Architecture (MDA)** offers a perfect balance between organization, scalability, and simplicity. Its fundamental premise is that models are the central axis of design, and everything related to a model lives alongside it.
 
 It is a practical, realistic, and highly usable architecture for teams working with Laravel, especially with multiple databases and domains that do not fit perfectly into traditional DDD.
 
+---
